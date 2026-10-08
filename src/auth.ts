@@ -123,6 +123,7 @@ export type EmailSignInResult =
 /** Sign in with an email alone. A NEW address gets a session at once (unverified, in its
  *  grace period) plus the welcome mail with link + password. An existing account is never
  *  opened by its address alone — see EmailSignInResult. */
+/** @deprecated The apps sign in only after the emailed code is verified (requestEmailCode + verifyEmailCode); the platform no longer mints a session here. */
 export async function signInWithEmail(email: string): Promise<EmailSignInResult> {
   const res = await fetch(`${PLATFORM}/authenticate/api/email-signin/`, {
     method: "POST",

@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Mail, ArrowRight, X, Info, KeyRound, MailCheck, Hash } from "lucide-react";
 
-import { changePassword, requestEmailCode, resendVerifyLink, signInWithEmail, signInWithPassword, verifyEmailCode, SUPPORT_EMAIL_FALLBACK } from "./auth";
+import { changePassword, requestEmailCode, resendVerifyLink, signInWithPassword, verifyEmailCode, SUPPORT_EMAIL_FALLBACK } from "./auth";
 import { config } from "./config";
 // The sign-in dialog every app on the platform uses: an emailed 6-digit code by default, a
 // password as the alternative. Moved here from the MineTrace frontend so CoreTrace, the hub
@@ -11,7 +11,7 @@ import { config } from "./config";
 export const EN = {
   "eg.backToPassword": "Back to password sign-in",
   "eg.beta": "beta",
-  "eg.bodyPost": ". You are in right away. We will email you a code to confirm your address — no password, no spam.",
+  "eg.bodyPost": ". We'll email you a six-digit code. Enter it to sign in — no password, no spam.",
   "eg.bodyPre": "{app} is in",
   "eg.checkSpam": "Not there? Check your spam or junk folder — Outlook and corporate mail filters often put it there.",
   "eg.codeAria": "Six-digit code",
@@ -30,7 +30,7 @@ export const EN = {
   "eg.newPassword": "New password",
   "eg.noCode": "No code? Sign in with password",
   "eg.noMailHelp": "You can contact Pascal to sort this out:",
-  "eg.note": "Enter the code we email you within 30 days to unlock the assistant and your own data. During beta, chats and scored locations are logged to improve the model and product.",
+  "eg.note": "Enter the code to sign in. During beta, chats and scored locations are logged to improve the model and product.",
   "eg.or": "or",
   "eg.otherEmail": "Use a different email",
   "eg.password": "Password",
@@ -109,26 +109,23 @@ export function EmailGate(props: EmailGateProps) {
     if (s !== "forgot") setAfterCode("in");
   };
 
+  // Nothing is signed in until the emailed code is verified: the email step only asks the
+  // platform for a code. (The old flow minted an unverified session here with a 30-day
+  // grace; the owner wants no session at all before the code.)
   async function submitEmail(e: React.FormEvent) {
     e.preventDefault();
     if (!valid || busy) return;
     setBusy(true); setError(null);
     try {
-      const r = await signInWithEmail(email.trim());
-      if (r.status === "in") { onAuthed(); return; }
-      setLinkSent(r.linkSent); setSupportEmail(r.supportEmail); setResent(false); setResetMode(false);
-      // The platform already mailed a code, so go straight to typing it. The old screen
-      // said "we sent you a link" and waited; on a corporate Microsoft tenant that link
-      // is the message that does not arrive, and this is the person it strands.
-      if (r.codeSent) { setCode(""); setCodeSent(true); setStep("code"); }
-      else setStep("exists");
+      await requestEmailCode(email.trim());
+      setResent(false); setResetMode(false);
+      setCode(""); setCodeSent(true); setStep("code");
       setBusy(false);
     } catch (err) {
       setError((err as Error).message);
       setBusy(false);
     }
   }
-
   async function resend() {
     if (busy) return;
     setBusy(true); setError(null);
