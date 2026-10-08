@@ -11,6 +11,8 @@ export type PlatformClientConfig = {
   oidc: boolean;
   /** Where "contact support" points */
   supportEmail: string;
+  /** The app's name, as the sign-in dialog says it ("MineTrace is in beta") */
+  appName: string;
   /** Called on sign-in events ("sign_in", "email_verified", "password_changed", "feedback_sent"), for analytics */
   onEvent?: (event: string, props?: Record<string, unknown>) => void;
 };
@@ -22,6 +24,7 @@ export const config: PlatformClientConfig = {
   clientId: process.env.NEXT_PUBLIC_PLATFORM_CLIENT_ID ?? "",
   oidc: process.env.NEXT_PUBLIC_PLATFORM_OIDC !== "0",
   supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL ?? "pascal.sun@uwa.edu.au",
+  appName: process.env.NEXT_PUBLIC_APP_NAME ?? "The platform",
 };
 
 export function configurePlatformClient(patch: Partial<PlatformClientConfig>): void {

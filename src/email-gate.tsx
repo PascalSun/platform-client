@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Mail, ArrowRight, X, Info, KeyRound, MailCheck, Hash } from "lucide-react";
 
 import { changePassword, requestEmailCode, resendVerifyLink, signInWithEmail, signInWithPassword, verifyEmailCode, SUPPORT_EMAIL_FALLBACK } from "./auth";
+import { config } from "./config";
 // The sign-in dialog every app on the platform uses: an emailed 6-digit code by default, a
 // password as the alternative. Moved here from the MineTrace frontend so CoreTrace, the hub
 // and MineTrace share one dialog. Strings are English by default; pass `t` to translate.
@@ -11,14 +12,14 @@ export const EN = {
   "eg.backToPassword": "Back to password sign-in",
   "eg.beta": "beta",
   "eg.bodyPost": ". You are in right away. We will email you a code to confirm your address — no password, no spam.",
-  "eg.bodyPre": "MineTrace is in",
+  "eg.bodyPre": "{app} is in",
   "eg.checkSpam": "Not there? Check your spam or junk folder — Outlook and corporate mail filters often put it there.",
   "eg.codeAria": "Six-digit code",
   "eg.codeBody": "We emailed a six-digit code to {email}. It has no link in it, so spam filters rarely touch it.",
   "eg.codeSent": "Code sent",
   "eg.codeTitle": "Enter your code",
   "eg.emailAria": "Email address",
-  "eg.enter": "Enter the map",
+  "eg.enter": "Continue",
   "eg.entering": "Entering…",
   "eg.existsBody": "{email} already has an account, so we emailed a sign-in link there. Open it to sign in, or use your password.",
   "eg.existsNoMail": "{email} already has an account. Sign in with your password, or ask for a new link.",
@@ -76,7 +77,7 @@ export type EmailGateProps = {
 
 export function EmailGate(props: EmailGateProps) {
   const { open, onClose, onAuthed, initialStep = "email" } = props;
-  const t = (k: GateKey) => props.t?.(k) ?? EN[k];
+  const t = (k: GateKey) => (props.t?.(k) ?? EN[k]).replace("{app}", config.appName);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [step, setStep] = useState<"email" | "password" | "exists" | "forgot" | "code" | "setpw">(initialStep);
