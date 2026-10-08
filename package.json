@@ -1,6 +1,6 @@
 {
   "name": "@ntlp/platform-client",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "How a research app's frontend talks to the NTLP Geo Research Platform: sign-in through the platform, tokens, API calls, shared chrome types.",
   "license": "MIT",
   "repository": { "type": "git", "url": "https://github.com/PascalSun/platform-client.git" },
@@ -13,10 +13,11 @@
     "./fetch": "./src/fetch.ts",
     "./chrome": "./src/chrome.ts",
     "./sso": "./src/sso.ts",
-    "./config": "./src/config.ts"
+    "./config": "./src/config.ts",
+    "./email-gate": "./src/email-gate.tsx"
   },
   "files": ["src", "README.md", "LICENSE"],
   "scripts": { "check": "tsc --noEmit -p ." },
-  "peerDependencies": { "next": ">=15", "react": ">=19" },
-  "devDependencies": { "typescript": "^5.9.0", "@types/node": "^20", "@types/react": "^19", "next": "^16.0.0", "react": "^19.0.0" }
+  "peerDependencies": { "next": ">=15", "react": ">=19", "motion": ">=12", "lucide-react": ">=0.400" },
+  "devDependencies": { "typescript": "^5.9.0", "@types/node": "^20", "@types/react": "^19", "next": "^16.0.0", "react": "^19.0.0", "motion": "^12.0.0", "lucide-react": "^1.0.0" }
 }

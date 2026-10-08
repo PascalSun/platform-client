@@ -73,3 +73,12 @@ const res = await platformFetch("/core-scan/api/holes/");      // bearer token a
 ## Versions
 
 Tag a release (`git tag v0.1.1 && git push --tags`) and bump the tag in each app's `package.json`. Breaking changes get a new major.
+
+## The sign-in dialog
+
+`@ntlp/platform-client/email-gate` exports `EmailGate`, the in-page sign-in dialog every app on the platform uses (emailed 6-digit code by default, password as the alternative). It needs `motion` and `lucide-react` in the app, and the app's Tailwind must scan this package's `src` (`@source "../../node_modules/@ntlp/platform-client/src";` in `globals.css`). Pass `t` to translate its strings; English is built in.
+
+```tsx
+import { EmailGate } from "@ntlp/platform-client/email-gate";
+<EmailGate open={open} onClose={() => setOpen(false)} onAuthed={() => { setOpen(false); refetch(); }} />
+```
