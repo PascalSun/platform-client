@@ -1,6 +1,10 @@
-# @ntlp/platform-client
+# ntlp-geodata-web — the web client for the NTLP Geo Data Platform
 
-How a research app's **frontend** talks to the [NTLP Geo Research Platform](https://geo.nlp-tlp.org): sign-in through the platform, the tokens that come with it, and calling the platform's API as the signed-in person. Every research app on the platform (MineTrace, CoreTrace, …) reaches the platform's data through its public API and nothing else; this package only saves each app from writing the same sign-in and token code again. The API itself is documented at <https://platform.nlp-tlp.org/api/docs/> and works from any language.
+`@ntlp/geodata-web` is what a website built on the [NTLP Geo Data Platform](https://geo.nlp-tlp.org) uses to talk to it: the sign-in dialog (an emailed six-digit code, or a password), storing and refreshing the tokens that come with it, calling the platform's API as the signed-in person, and the shared site config. Every app on the platform (the geo hub, MineTrace, CoreTrace, …) uses it, so none of them writes its own sign-in or token code. The API itself is documented at <https://geo.nlp-tlp.org/docs> and works from any language.
+
+Getting data in Python (scripts, notebooks)? Use the Python client instead: [`ntlp-geodata`](https://github.com/PascalSun/ntlp-geodata).
+
+Versions up to v0.3.0 were published as `@ntlp/platform-client` from `PascalSun/platform-client`; v0.4.0 renamed the package and the repo. The code is unchanged by the rename.
 
 No credentials live here. Everything the package needs comes from the app's own environment at build time.
 
@@ -10,12 +14,12 @@ The package is TypeScript source, consumed by Next.js apps. Depend on a tagged v
 
 ```jsonc
 // package.json
-"dependencies": { "@ntlp/platform-client": "github:PascalSun/platform-client#v0.1.0" }
+"dependencies": { "@ntlp/geodata-web": "github:PascalSun/ntlp-geodata-web#v0.4.0" }
 ```
 
 ```ts
 // next.config.ts
-const nextConfig = { transpilePackages: ["@ntlp/platform-client"] };
+const nextConfig = { transpilePackages: ["@ntlp/geodata-web"] };
 ```
 
 ## Set-up
@@ -39,13 +43,13 @@ The platform is the identity provider. Two pages in the app:
 // app/auth/signin/page.tsx — send the browser to the platform; it comes back to /auth/callback
 "use client";
 import { useEffect } from "react";
-import { signIn } from "@ntlp/platform-client";
+import { signIn } from "@ntlp/geodata-web";
 export default function Page() { useEffect(() => { signIn(new URLSearchParams(location.search).get("next") ?? "/"); }, []); return null; }
 
 // app/auth/callback/page.tsx — finish it, then go where the person was
 "use client";
 import { useEffect } from "react";
-import { completeSignIn } from "@ntlp/platform-client";
+import { completeSignIn } from "@ntlp/geodata-web";
 export default function Page() { useEffect(() => { completeSignIn().then((to) => location.replace(to)); }, []); return null; }
 ```
 
@@ -56,7 +60,7 @@ The app must be registered on the platform (one entry in its research-app regist
 ## Calling the API
 
 ```ts
-import { platformFetch } from "@ntlp/platform-client";
+import { platformFetch } from "@ntlp/geodata-web";
 const res = await platformFetch("/core-scan/api/holes/");      // bearer token attached, refreshed on expiry
 ```
 
@@ -76,9 +80,9 @@ Tag a release (`git tag v0.1.1 && git push --tags`) and bump the tag in each app
 
 ## The sign-in dialog
 
-`@ntlp/platform-client/email-gate` exports `EmailGate`, the in-page sign-in dialog every app on the platform uses (emailed 6-digit code by default, password as the alternative). It needs `motion` and `lucide-react` in the app, and the app's Tailwind must scan this package's `src` (`@source "../../node_modules/@ntlp/platform-client/src";` in `globals.css`). Pass `t` to translate its strings; English is built in.
+`@ntlp/geodata-web/email-gate` exports `EmailGate`, the in-page sign-in dialog every app on the platform uses (emailed 6-digit code by default, password as the alternative). It needs `motion` and `lucide-react` in the app, and the app's Tailwind must scan this package's `src` (`@source "../../node_modules/@ntlp/geodata-web/src";` in `globals.css`). Pass `t` to translate its strings; English is built in.
 
 ```tsx
-import { EmailGate } from "@ntlp/platform-client/email-gate";
+import { EmailGate } from "@ntlp/geodata-web/email-gate";
 <EmailGate open={open} onClose={() => setOpen(false)} onAuthed={() => { setOpen(false); refetch(); }} />
 ```

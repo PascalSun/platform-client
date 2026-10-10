@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "@ntlp/platform-client",
+      "name": "@ntlp/geodata-web",
       "devDependencies": {
         "@types/node": "^20",
         "@types/react": "^19",
